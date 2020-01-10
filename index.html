@@ -1,48 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Document</title>
     <script src="./main.js"></script>
-</head>
+  </head>
 
-<body>
+  <body>
     Tutaj Cwiczymy Localdata
 
     <form>
-        <span>Podaj Nazwe</span>
-        <input type="text" placeholder="nazwa" id="productName" />
-        <span>Podaj Ilość:</span>
-        <input type="number" min="0" step="1" placeholder="ilość" id="productNumber" />
-        <button id="addButton">Dodaj do listy</button>
+      <label>Podaj Nazwe</label>
+      <input type="text" placeholder="nazwa" id="productName" />
+      <label>Podaj Ilość:</label>
+      <input
+        type="number"
+        min="0"
+        step="1"
+        placeholder="ilość"
+        id="productNumber"
+      />
+      <button id="addButton">Dodaj do listy</button>
     </form>
     <div>
-        <span>Usuń</span>
-        <input type="text" placeholder="nazwa">
-        <button>Usuń</button>
+      <span>Usuń</span>
+      <input type="text" placeholder="nazwa" />
+      <button>Usuń</button>
     </div>
     <div>
-        <h3>Lista zakupów:</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Name:</th>
-                    <th>Amount</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="tBody">
-
-
-            </tbody>
-        </table>
-        <ul></ul>
+      <h3>Lista zakupów:</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Name:</th>
+            <th>Amount</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="tBody"></tbody>
+      </table>
+      <ul></ul>
     </div>
-    <canvas width="400" height="200" id="canvas">
-    </canvas>
-</body>
-
+  </body>
 </html>

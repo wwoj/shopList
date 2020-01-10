@@ -1,130 +1,97 @@
-const localKey = "www.shopList.www"
+const LOCAL_KEY = "www.shopList.www";
 window.onload = () => {
-    let localdata
-        //localStorage.clear();
-        //moj klucz do zakopow: www.shopList.www
-    let shopTable = [];
-    const inputName = document.getElementById("productName");
-    const inputValue = document.getElementById("productNumber");
-    const addButton = document.getElementById("addButton");
-    const mainTable = document.getElementById("tBody");
-    const form = document.querySelector("form");
+  let itemsToBuy = [];
+  const inputName = document.getElementById("productName");
+  const inputValue = document.getElementById("productNumber");
+  const addButton = document.getElementById("addButton");
+  const mainTable = document.getElementById("tBody");
+  const form = document.querySelector("form");
 
-    // checking if any list is present;
-    if ((localStorage.getItem(localKey) != null) && (localStorage.getItem(localKey).length > 2)) {
-        shopTable = JSON.parse(localStorage.getItem(localKey));
-        console.log("weszlo");
-        deleteList(mainTable);
-        buildTable(mainTable, shopTable);
-        //console.log(localStorage.getItem(localKey));
-    } else {
-        alert("Brak zakupów dodanych");
+  const dataFromLocalStorage = localStorage.getItem(LOCAL_KEY);
+  if (dataFromLocalStorage != null && dataFromLocalStorage.length > 2) {
+    itemsToBuy = JSON.parse(dataFromLocalStorage);
+    console.log("weszlo");
+    buildTable(mainTable, itemsToBuy);
+  } else {
+    alert("Brak zakupów dodanych");
+  }
+
+  addButton.addEventListener("click", () => {
+    if (isEmptyValue(inputName.value, inputValue.value)) {
+      alert("Próbowałeś dodać pusty element");
+      return;
     }
+    createElement(itemsToBuy, inputName.value, inputValue.value);
+    saveToLocal(itemsToBuy);
+    deleteList(mainTable);
+    buildTable(mainTable, itemsToBuy);
+  });
 
-    addButton.addEventListener("click", () => {
-        if (emptyInput(inputName.value, inputValue.value)) {
-            createElement(shopTable, inputName.value, inputValue.value);
-            saveToLocal(shopTable);
-            deleteList(mainTable);
-            buildTable(mainTable, shopTable);
-        } else {
-            alert("Próbowałeś dodać pusty element");
-        }
+  form.onsubmit = elem => {
+    elem.preventDefault();
+  };
 
+  // items ->[{productName: 'pomidor', productAmount: 5}, {productName:'piwo', productAmount:1}]
+  function buildTable(parent, items) {
+    items.forEach((elem, index) => {
+      let tr = document.createElement("tr");
+
+      let idTd = document.createElement("td");
+      idTd.innerText = index + 1;
+      tr.appendChild(idTd);
+
+      let td0 = document.createElement("td");
+      td0.innerText = elem.productName;
+      tr.appendChild(td0);
+
+      let td1 = document.createElement("td");
+      td1.innerText = elem.productAmount;
+      tr.appendChild(td1);
+
+      let td2 = document.createElement("td");
+      let deleteButton = document.createElement("button");
+      deleteButton.setAttribute("id", index);
+      deleteButton.innerText = "Delete item";
+      deleteButton.addEventListener("click", removeElement);
+      td2.appendChild(deleteButton);
+      tr.appendChild(td2);
+
+      parent.appendChild(tr); //1. modyfikacja drzewa DOM
     });
+  }
 
-
-
-
-    /////////////// Blokowanie dzialania formularza
-    form.onsubmit = elem => {
-        elem.preventDefault();
-    };
-
-
-
-
-    function buildTable(parent, table) {
-
-        table.forEach((elem, index) => {
-            let tr = document.createElement("tr");
-            parent.appendChild(tr);
-            let td0 = document.createElement("td");
-            let td1 = document.createElement("td");
-            let td2 = document.createElement("td");
-            tr.appendChild(td0);
-            tr.appendChild(td1);
-            tr.appendChild(td2);
-            td0.innerText = elem.productName;
-            td1.innerText = elem.productAmount;
-            let deleteButton = document.createElement("button");
-            td2.appendChild(deleteButton);
-            deleteButton.setAttribute("id", index);
-            deleteButton.innerText = "Delete item";
-            deleteButton.addEventListener("click", changColor);
-
-        });
-    }
-
-
-    function changColor(even) {
-        let element = even.target;
-        element.style.background = "green";
-        let idVal = parseInt(element.getAttribute("id"));
-
-        // Delete from table
-
-        deleteFromTable(shopTable, idVal);
-        shopTable.splice(idVal, 1);
-        //Save to localstorage
-        let updatedTable = JSON.stringify(shopTable);
-        localStorage.setItem(localKey, updatedTable)
-            //Delete from TR
-        let parent = element.parent;
-
-        let grandParent = element.parentNode.parentNode;
-
-        grandParent.remove();
-    }
+  function removeElement(even) {
+    let element = even.target;
+    element.style.background = "green";
+    let idVal = parseInt(element.getAttribute("id"));
+    deleteFromArray(itemsToBuy, idVal);
+    saveToLocal(itemsToBuy);
+    deleteList(mainTable);
+    buildTable(mainTable, itemsToBuy);
+  }
 };
 
-function createElement(table, name, amount) {
-    let obj = {
-        productName: name,
-        productAmount: amount
-    }
-    table.push(obj);
+function createElement(items, name, amount) {
+  let obj = {
+    productName: name,
+    productAmount: amount
+  };
+  items.push(obj);
 }
 
-function deleteFromTable(table, i) {
-    table.splice(i, 0);
+function deleteFromArray(table, i) {
+  table.splice(i, 1);
 }
-
-
-
-
 
 function deleteList(dest) {
-    while (dest.hasChildNodes()) {
-        dest.removeChild(dest.firstChild);
-    }
+  dest.innerHTML = "";
 }
 
-
-//Przerobic na obiekty\
-//Przerobic na JSON
-
-// check if value is not empty:
-function emptyInput(name, value) {
-    if (value == "" || name == "" || value == 0) {
-        return 0;
-    } else {
-        return 1;
-    }
-
+function isEmptyValue(name, value) {
+  return name == "" || value == "";
 }
-// convert to JSON
-function saveToLocal(table) {
-    let item = JSON.stringify(table);
-    localStorage.setItem(localKey, item);
+
+function saveToLocal(items) {
+  let item = JSON.stringify(items);
+  localStorage.setItem(LOCAL_KEY, item);
 }
