@@ -25,6 +25,7 @@ window.onload = () => {
     saveToLocal(itemsToBuy);
     deleteList(mainTable);
     buildTable(mainTable, itemsToBuy);
+    clearForm(inputName, inputValue);
   });
 
   form.onsubmit = elem => {
@@ -94,4 +95,9 @@ function isEmptyValue(name, value) {
 function saveToLocal(items) {
   let item = JSON.stringify(items);
   localStorage.setItem(LOCAL_KEY, item);
+}
+
+function clearForm(name, count) {
+  name.value = "";
+  count.value = 0;
 }
